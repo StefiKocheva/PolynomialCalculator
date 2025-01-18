@@ -22,6 +22,7 @@ void showOptions();
 void handleOptionSelection();
 bool isValidOption(char* option);
 int arrayToInteger(char* string);
+bool isValidInteger(char* str);
 
 int main()
 {
@@ -176,4 +177,40 @@ int arrayToInteger(char* string)
     }
 
     return result * sign;
+}
+
+int min(int a, int b)
+{
+	return a > b ? b : a;
+}
+
+int max(int a, int b)
+{
+	return a < b ? b : a;
+}
+
+int abs(int a)
+{
+	return a < 0 ? -a : a;
+}
+
+int gcd(int a, int b)
+{
+	while (b != 0) {
+		int temp = b;
+		b = a % b;
+		a = temp;
+	}
+
+	return abs(a);
+}
+
+int lcm(int a, int b)
+{
+	if (a == 0 || b == 0) 
+	{        
+		return 0;
+	}
+
+	return abs(a * b) / gcd(a, b);
 }
