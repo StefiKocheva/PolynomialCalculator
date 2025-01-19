@@ -350,6 +350,46 @@ std::pair<int, int> readFraction()
     return { numerator, denominator };
 }
 
+std::pair<int, int> addFractions(const std::pair<int, int>& firstFaction, const std::pair<int, int>& secondFraction)
+{
+    int firstNumerator = firstFaction.first;
+    int firstDenominator = firstFaction.second;
+
+    int secondNumerator = secondFraction.first;
+    int secondDenominator = secondFraction.second;
+
+    int lcmDenominator = lcm(firstDenominator, secondDenominator);
+
+    int sumOfNumerators = (firstNumerator * (lcmDenominator / firstDenominator)) + (secondNumerator * (lcmDenominator / secondNumerator));
+
+    int divisor = gcd(sumOfNumerators, lcmDenominator);
+    sumOfNumerators /= divisor;
+    lcmDenominator /= divisor;
+
+    return { sumOfNumerators, lcmDenominator };
+}
+
+std::pair<int, int> subtractFractions(const std::pair<int, int>& firstFraction, const std::pair<int, int>& secondFraction)
+{
+    int firstNumerator = firstFraction.first;
+    int firstDenominator = firstFraction.second;
+
+    int secondNumerator = secondFraction.first;
+    int secondDenominator = secondFraction.second;
+
+    int lcmDenominator = lcm(firstDenominator, secondDenominator);
+
+    int differenceOfNumerators = (firstNumerator * (lcmDenominator / firstDenominator)) -
+        (secondNumerator * (lcmDenominator / secondDenominator));
+
+    int divisor = gcd(differenceOfNumerators, lcmDenominator);
+    differenceOfNumerators /= divisor;
+    lcmDenominator /= divisor;
+
+    return { differenceOfNumerators, lcmDenominator };
+}
+
+
 void readPolynomial(char name)
 {
 	std::cout << "Enter Polynomial>>" << name << "(x)" << std::endl;
