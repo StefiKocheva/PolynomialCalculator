@@ -26,10 +26,24 @@ constexpr char TERMINATE_SYMBOL = '\0';
 void showOptions();
 void handleOptionSelection();
 bool isValidOption(char* option);
-int arrayToInteger(char* string);
-bool isValidDegree(char* degreeInput);
-void readPolynomial(char name);
+int arrayToInteger(char* str);
+int min(int a, int b);
+int max(int a, int b);
+int abs(int a);
+int gcd(int a, int b);
+int lcm(int a, int b);
+int readPolynomialDegree();
+bool isValidDegree(char* degree);
+bool isValidInteger(char* str);
+std::pair<int, int> readFraction();
+std::pair<int, int> simplifyFraction(int numerator, int denominator);
+std::pair<int, int> addFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB);
+std::pair<int, int> subtractFractions(const std::pair<int, int> firstFraction, const std::pair<int, int> secondFraction);
+std::pair<int, int> multiplyFractions(const std::pair<int, int> firstFraction, const std::pair<int, int> secondFraction);
+std::vector<std::pair<int, int>> readPolynomial(char name);
 void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomial);
+void addPolynomials();
+
 
 int main()
 {
@@ -68,7 +82,7 @@ void handleOptionSelection()
 
         if (!isValidOption(option))
         {
-            std::cout << "Invalid option!" << std::endl;
+            std::cout << "Invalid option! Try again>> " << std::endl;
 
             continue;
         }
@@ -77,61 +91,61 @@ void handleOptionSelection()
 
         switch (optionNumber)
         {
-	        case 1:
-	        {
-	            //Adding polynomials...
-	            break;
-	        }
-	        case 2:
-	        {
-	            //Subtracting polynomials...
-	            break;
-	        }
-	        case 3:
-	        {
-	            //Multiplying polynomials...
-	            break;
-	        }
-	        case 4:
-	        {
-	            //Dividing polynomials...
-	            break;
-	        }
-	        case 5:
-	        {
-	            //Multiplying polynomial by scalar...
-	            break;
-	        }
-	        case 6:
-	        {
-	            //Finding value of polynomial...
-	            break;
-	        }
-	        case 7:
-	        {
-	            //Finding GCD of polynomials...
-	            break;
-	        }
-	        case 8:
-	        {
-	            //Displaying Vieta's formulas...
-	            break;
-	        }
-	        case 9:
-	        {
-	            //Representing polynomial in powers of (x + a)...
-	            break;
-	        }
-	        case 10:
-	        {
-	            //Factoring polynomial...
-	            break;
-	        }
-	        case 11:
-	        {
-	            std::cout << "Exiting... Goodbye!" << std::endl;
-	            return;
-	        }
+        case 1:
+        {
+            addPolynomials();
+
+            break;
+        }
+        case 2:
+        {
+            //Subtracting polynomials...
+            break;
+        }
+        case 3:
+        {
+            //Multiplying polynomials...
+            break;
+        }
+        case 4:
+        {
+            //Dividing polynomials...
+            break;
+        }
+        case 5:
+        {
+            //Multiplying polynomial by scalar...
+            break;
+        }
+        case 6:
+        {
+            //Finding value of polynomial...
+            break;
+        }
+        case 7:
+        {
+            //Finding GCD of polynomials...
+            break;
+        }
+        case 8:
+        {
+            //Displaying Vieta's formulas...
+            break;
+        }
+        case 9:
+        {
+            //Representing polynomial in powers of (x + a)...
+            break;
+        }
+        case 10:
+        {
+            //Factoring polynomial...
+            break;
+        }
+        case 11:
+        {
+            std::cout << "Exiting..." << std::endl;
+            return;
         }
     }
 }
@@ -145,7 +159,7 @@ bool isValidOption(char* option)
 
     for (int i = 0; option[i] != TERMINATE_SYMBOL; i++)
     {
-        if (option[i] < '0' || option[i] > '9')
+        if (option[i] < '0' || option[i] > '7')
         {
             return false;
         }
@@ -156,30 +170,30 @@ bool isValidOption(char* option)
     return FISRT_OPTION <= optionNumber && optionNumber <= LAST_OPTION;
 }
 
-int arrayToInteger(char* string)
+int arrayToInteger(char* str)
 {
     int sign = 1;
     int result = 0;
 
-    while (*string == ' ' || *string == '\t' || *string == '\n')
+    while (*str == ' ' || *str == '\t' || *str == '\n')
     {
-        string++;
+        str++;
     }
 
-    if (*string == '-')
+    if (*str == '-')
     {
         sign = -1;
-        string++;
+        str++;
     }
-    else if (*string == '+')
+    else if (*str == '+')
     {
-        string++;
+        str++;
     }
 
-    while (*string != TERMINATE_SYMBOL)
+    while (*str != TERMINATE_SYMBOL)
     {
-        result = result * 10 + (*string - '0');
-        string++;
+        result = result * 10 + (*str - '0');
+        str++;
     }
 
     return result * sign;
@@ -230,7 +244,7 @@ int readPolynomialDegree()
 
 	if (!isValidDegree(degree))
 	{
-        std::cout << "Hmm, that doesn't look right. Please enter a non-negative integer for the degree of the polynomial." << std::endl;
+        std::cout << "Invalid degree value! Try again>> " << std::endl;
 
         return readPolynomialDegree();
 	}
@@ -238,23 +252,23 @@ int readPolynomialDegree()
 	return arrayToInteger(degree);
 }
 
-bool isValidDegree(char* degreeInput)
+bool isValidDegree(char* degree)
 {
     int i = 0;
 
-    if (degreeInput[i] == TERMINATE_SYMBOL)
+    if (degree[i] == TERMINATE_SYMBOL)
     {
         return false;
     }
 
-    if (degreeInput[i] == '-')
+    if (degree[i] == '-')
     {
         return false;
     }
 
-    while (degreeInput[i] != TERMINATE_SYMBOL)
+    while (degree[i] != TERMINATE_SYMBOL)
     {
-        if (degreeInput[i] < '0' || degreeInput[i] > '9')
+        if (degree[i] < '0' || degree[i] > '9')
         {
             return false;
         }
@@ -300,6 +314,7 @@ std::pair<int, int> readFraction()
     {
         if (input[i] == '/') {
             slashPosition = &input[i];
+
             break;
         }
     }
@@ -308,7 +323,7 @@ std::pair<int, int> readFraction()
     {
         if (!isValidInteger(input)) 
         {
-            std::cout << "Invalid input! Please enter a valid number: ";
+            std::cout << "Invalid number! Try again>> ";
 
             return readFraction();
         }
@@ -323,7 +338,7 @@ std::pair<int, int> readFraction()
 
         if (!isValidInteger(numeratorStr) || !isValidInteger(denominatorStr)) 
         {
-            std::cout << "Invalid fraction format! Both numerator and denominator should be integers. Please enter a valid number: ";
+            std::cout << "Invalid fraction! Try again>>: ";
 
             return readFraction();
         }
@@ -333,7 +348,7 @@ std::pair<int, int> readFraction()
 
         if (denominator == 0) 
         {
-            std::cerr << "Denominator can't be zero. Please enter a valid number: ";
+            std::cerr << "Denominator can't be zero. Try again>> ";
             return readFraction();
         }
     }
@@ -350,47 +365,66 @@ std::pair<int, int> readFraction()
     return { numerator, denominator };
 }
 
-std::pair<int, int> addFractions(const std::pair<int, int>& firstFaction, const std::pair<int, int>& secondFraction)
+std::pair<int, int> simplifyFraction(int numerator, int denominator)
 {
-    int firstNumerator = firstFaction.first;
-    int firstDenominator = firstFaction.second;
+    int divisor = gcd(numerator, denominator);
+    numerator /= divisor;
+    denominator /= divisor;
 
-    int secondNumerator = secondFraction.first;
-    int secondDenominator = secondFraction.second;
+    if (denominator < 0)
+    {
+        numerator = -numerator;
+        denominator = -denominator;
+    }
+
+    return { numerator, denominator };
+}
+
+std::pair<int, int> addFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB)
+{
+    int numeratorOfA = fractionA.first;
+    int denominatorOfA = fractionA.second;
+
+    int numeratorOfB = fractionB.first;
+    int denominatorOfB = fractionB.second;
+
+    int lcmDenominator = lcm(denominatorOfA, denominatorOfB);
+
+    int sumNumerator = (numeratorOfA * (lcmDenominator / denominatorOfA)) + (numeratorOfB * (lcmDenominator / denominatorOfB));
+
+    return simplifyFraction(sumNumerator, lcmDenominator);
+}
+
+std::pair<int, int> subtractFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB)
+{
+    int firstNumerator = fractionA.first;
+    int firstDenominator = fractionA.second;
+
+    int secondNumerator = fractionB.first;
+    int secondDenominator = fractionB.second;
 
     int lcmDenominator = lcm(firstDenominator, secondDenominator);
 
-    int sumOfNumerators = (firstNumerator * (lcmDenominator / firstDenominator)) + (secondNumerator * (lcmDenominator / secondNumerator));
+    int differenceNumerator = (firstNumerator * (lcmDenominator / firstDenominator)) - (secondNumerator * (lcmDenominator / secondDenominator));
 
-    int divisor = gcd(sumOfNumerators, lcmDenominator);
-    sumOfNumerators /= divisor;
-    lcmDenominator /= divisor;
-
-    return { sumOfNumerators, lcmDenominator };
+    return simplifyFraction(differenceNumerator, lcmDenominator);
 }
 
-std::pair<int, int> subtractFractions(const std::pair<int, int>& firstFraction, const std::pair<int, int>& secondFraction)
+std::pair<int, int> multiplyFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB)
 {
-    int firstNumerator = firstFraction.first;
-    int firstDenominator = firstFraction.second;
+    int firstNumerator = fractionA.first;
+    int firstDenominator = fractionA.second;
 
-    int secondNumerator = secondFraction.first;
-    int secondDenominator = secondFraction.second;
+    int secondNumerator = fractionB.first;
+    int secondDenominator = fractionB.second;
 
-    int lcmDenominator = lcm(firstDenominator, secondDenominator);
+    int productNumerator = firstNumerator * secondNumerator;
+    int productDenominator = firstDenominator * secondDenominator;
 
-    int differenceOfNumerators = (firstNumerator * (lcmDenominator / firstDenominator)) -
-        (secondNumerator * (lcmDenominator / secondDenominator));
-
-    int divisor = gcd(differenceOfNumerators, lcmDenominator);
-    differenceOfNumerators /= divisor;
-    lcmDenominator /= divisor;
-
-    return { differenceOfNumerators, lcmDenominator };
+    return simplifyFraction(productNumerator, productDenominator);
 }
 
-
-void readPolynomial(char name)
+std::vector<std::pair<int, int>> readPolynomial(char name)
 {
 	std::cout << "Enter Polynomial>>" << name << "(x)" << std::endl;
 
@@ -407,6 +441,29 @@ void readPolynomial(char name)
 	}
 
     printPolynomial(name, polynomial);
+
+    return polynomial;
+}
+
+void addPolynomials()
+{
+    std::vector<std::pair<int, int>> firstPolynomial = readPolynomial('P');
+    std::vector<std::pair<int, int>> secondPolynomial = readPolynomial('Q');
+
+    int maxDegree = max(firstPolynomial.size(), secondPolynomial.size()) - 1;
+
+    std::vector<std::pair<int, int>> result(maxDegree + 1, { 0, 1 });
+
+    std::pair<int, int> emptyPair = { 0, 1 };
+
+    for (int i = 0; i <= maxDegree; i++) {
+        result[i] = addFractions(
+            (i < firstPolynomial.size()) ? firstPolynomial[i] : emptyPair,
+            (i < secondPolynomial.size()) ? secondPolynomial[i] : emptyPair
+        );
+    }
+
+    printPolynomial('R', result);
 }
 
 void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomial)
@@ -414,7 +471,7 @@ void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomi
     std::cout << name << "(x) = ";
     bool firstTerm = true;
 
-    for (int i = polynomial.size() - 1; i >= 0; --i)
+    for (int i = polynomial.size() - 1; i >= 0; i--)
     {
         int numerator = polynomial[i].first;
         int denominator = polynomial[i].second;
@@ -472,4 +529,3 @@ void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomi
 
     std::cout << std::endl;
 }
-
