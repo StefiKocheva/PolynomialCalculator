@@ -41,8 +41,9 @@ std::pair<int, int> addFractions(const std::pair<int, int> fractionA, const std:
 std::pair<int, int> subtractFractions(const std::pair<int, int> firstFraction, const std::pair<int, int> secondFraction);
 std::pair<int, int> multiplyFractions(const std::pair<int, int> firstFraction, const std::pair<int, int> secondFraction);
 std::vector<std::pair<int, int>> readPolynomial(char name);
-void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomial);
+void printPolynomial(char prefix, const std::vector<std::pair<int, int>>& polynomial);
 void addPolynomials();
+void subtractPolynomials();
 
 
 int main()
@@ -91,61 +92,63 @@ void handleOptionSelection()
 
         switch (optionNumber)
         {
-	        case 1:
-	        {
-	            addPolynomials();
-	            break;
-	        }
-	        case 2:
-	        {
-	            //Subtracting polynomials...
-	            break;
-	        }
-	        case 3:
-	        {
-	            //Multiplying polynomials...
-	            break;
-	        }
-	        case 4:
-	        {
-	            //Dividing polynomials...
-	            break;
-	        }
-	        case 5:
-	        {
-	            //Multiplying polynomial by scalar...
-	            break;
-	        }
-	        case 6:
-	        {
-	            //Finding value of polynomial...
-	            break;
-	        }
-	        case 7:
-	        {
-	            //Finding GCD of polynomials...
-	            break;
-	        }
-	        case 8:
-	        {
-	            //Displaying Vieta's formulas...
-	            break;
-	        }
-	        case 9:
-	        {
-	            //Representing polynomial in powers of (x + a)...
-	            break;
-	        }
-	        case 10:
-	        {
-	            //Factoring polynomial...
-	            break;
-	        }
-	        case 11:
-	        {
-	            std::cout << "Exiting..." << std::endl;
-	            return;
-	        }
+        case 1:
+        {
+            addPolynomials();
+
+            break;
+        }
+        case 2:
+        {
+            subtractPolynomials();
+
+            break;
+        }
+        case 3:
+        {
+            //Multiplying polynomials...
+            break;
+        }
+        case 4:
+        {
+            //Dividing polynomials...
+            break;
+        }
+        case 5:
+        {
+            //Multiplying polynomial by scalar...
+            break;
+        }
+        case 6:
+        {
+            //Finding value of polynomial...
+            break;
+        }
+        case 7:
+        {
+            //Finding GCD of polynomials...
+            break;
+        }
+        case 8:
+        {
+            //Displaying Vieta's formulas...
+            break;
+        }
+        case 9:
+        {
+            //Representing polynomial in powers of (x + a)...
+            break;
+        }
+        case 10:
+        {
+            //Factoring polynomial...
+            break;
+        }
+        case 11:
+        {
+            std::cout << "Exiting..." << std::endl;
+            return;
+        }
         }
     }
 }
@@ -201,55 +204,55 @@ int arrayToInteger(char* str)
 
 int min(int a, int b)
 {
-	return a > b ? b : a;
+    return a > b ? b : a;
 }
 
 int max(int a, int b)
 {
-	return a < b ? b : a;
+    return a < b ? b : a;
 }
 
 int abs(int a)
 {
-	return a < 0 ? -a : a;
+    return a < 0 ? -a : a;
 }
 
 int gcd(int a, int b)
 {
-	while (b != 0) {
-		int temp = b;
-		b = a % b;
-		a = temp;
-	}
+    while (b != 0) {
+        int temp = b;
+        b = a % b;
+        a = temp;
+    }
 
-	return abs(a);
+    return abs(a);
 }
 
 int lcm(int a, int b)
 {
-	if (a == 0 || b == 0) 
-	{        
-		return 0;
-	}
+    if (a == 0 || b == 0)
+    {
+        return 0;
+    }
 
-	return abs(a * b) / gcd(a, b);
+    return abs(a * b) / gcd(a, b);
 }
 
 int readPolynomialDegree()
 {
-	std::cout << "Enter degree of your polynomial>> ";
+    std::cout << "Enter degree of your polynomial>> ";
 
-	char degree[MAX_DEGREE_SIZE];
-	std::cin >> degree;
+    char degree[MAX_DEGREE_SIZE];
+    std::cin >> degree;
 
-	if (!isValidDegree(degree))
-	{
+    if (!isValidDegree(degree))
+    {
         std::cout << "Invalid degree value! Try again>> " << std::endl;
 
         return readPolynomialDegree();
-	}
+    }
 
-	return arrayToInteger(degree);
+    return arrayToInteger(degree);
 }
 
 bool isValidDegree(char* degree)
@@ -310,7 +313,7 @@ std::pair<int, int> readFraction()
     int numerator = 0, denominator = 1;
     char* slashPosition = nullptr;
 
-    for (int i = 0; input[i] != TERMINATE_SYMBOL; i++) 
+    for (int i = 0; input[i] != TERMINATE_SYMBOL; i++)
     {
         if (input[i] == '/') {
             slashPosition = &input[i];
@@ -319,9 +322,9 @@ std::pair<int, int> readFraction()
         }
     }
 
-    if (slashPosition == nullptr) 
+    if (slashPosition == nullptr)
     {
-        if (!isValidInteger(input)) 
+        if (!isValidInteger(input))
         {
             std::cout << "Invalid number! Try again>> ";
 
@@ -330,13 +333,13 @@ std::pair<int, int> readFraction()
 
         numerator = arrayToInteger(input);
     }
-    else 
+    else
     {
         *slashPosition = TERMINATE_SYMBOL;
         char* numeratorStr = input;
         char* denominatorStr = slashPosition + 1;
 
-        if (!isValidInteger(numeratorStr) || !isValidInteger(denominatorStr)) 
+        if (!isValidInteger(numeratorStr) || !isValidInteger(denominatorStr))
         {
             std::cout << "Invalid fraction! Try again>>: ";
 
@@ -346,7 +349,7 @@ std::pair<int, int> readFraction()
         numerator = arrayToInteger(numeratorStr);
         denominator = arrayToInteger(denominatorStr);
 
-        if (denominator == 0) 
+        if (denominator == 0)
         {
             std::cerr << "Denominator can't be zero. Try again>> ";
             return readFraction();
@@ -426,19 +429,19 @@ std::pair<int, int> multiplyFractions(const std::pair<int, int> fractionA, const
 
 std::vector<std::pair<int, int>> readPolynomial(char name)
 {
-	std::cout << "Enter Polynomial>>" << name << "(x)" << std::endl;
+    std::cout << "Enter Polynomial>> " << name << "(x)" << std::endl;
 
-	int degree = readPolynomialDegree();
+    int degree = readPolynomialDegree();
 
-	std::vector<std::pair<int, int>> polynomial(degree + 1);
+    std::vector<std::pair<int, int>> polynomial(degree + 1);
 
-	for (int i = degree; i >= 0; i--)
-	{
+    for (int i = degree; i >= 0; i--)
+    {
         std::cout << "Enter coefficient before x^" << i << ": ";
-		std::pair<int, int> coefficient = readFraction();
+        std::pair<int, int> coefficient = readFraction();
 
         polynomial[i] = coefficient;
-	}
+    }
 
     printPolynomial(name, polynomial);
 
@@ -456,25 +459,49 @@ void addPolynomials()
 
     std::pair<int, int> emptyPair = { 0, 1 };
 
-    for (int i = 0; i <= maxDegree; i++) {
+    for (int i = 0; i <= maxDegree; i++)
+    {
         result[i] = addFractions(
-            (i < firstPolynomial.size()) ? firstPolynomial[i] : emptyPair,
-            (i < secondPolynomial.size()) ? secondPolynomial[i] : emptyPair
-        );
+            i < firstPolynomial.size() ? firstPolynomial[i] : emptyPair,
+            i < secondPolynomial.size() ? secondPolynomial[i] : emptyPair);
     }
 
-    printPolynomial('R', result);
+    std::cout << "P(x)+Q(x) = ";
+    printPolynomial(TERMINATE_SYMBOL, result);
 }
 
-void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomial)
+void subtractPolynomials()
 {
-    std::cout << name << "(x) = ";
+    std::vector<std::pair<int, int>> firstPolynomial = readPolynomial('P');
+    std::vector<std::pair<int, int>> secondPolynomial = readPolynomial('Q');
+
+    int maxDegree = max(firstPolynomial.size(), secondPolynomial.size()) - 1;
+
+    std::vector<std::pair<int, int>> result(maxDegree + 1, { 0, 1 });
+
+    std::pair<int, int> emptyPair = { 0, 1 };
+
+    for (int i = 0; i <= maxDegree; i++)
+    {
+        result[i] = subtractFractions(
+            i < firstPolynomial.size() ? firstPolynomial[i] : emptyPair,
+            i < secondPolynomial.size() ? secondPolynomial[i] : emptyPair);
+    }
+
+    std::cout << "P(x)-Q(x) = ";
+    printPolynomial(TERMINATE_SYMBOL, result);
+}
+
+void printPolynomial(char prefix, const std::vector<std::pair<int, int>>& polynomial)
+{
+    std::cout << prefix << "(x) = ";
     bool firstTerm = true;
+    int numerator, denominator;
 
     for (int i = polynomial.size() - 1; i >= 0; i--)
     {
-        int numerator = polynomial[i].first;
-        int denominator = polynomial[i].second;
+        numerator = polynomial[i].first;
+        denominator = polynomial[i].second;
 
         if (numerator == 0)
         {
@@ -487,32 +514,27 @@ void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomi
             {
                 std::cout << "+";
             }
-            else
-            {
-                std::cout << " ";
-            }
         }
-
-        if (numerator == 1 && denominator == 1 && i > 0)
-        {
-            std::cout << "";
-        }
-        else if (numerator == -1 && denominator == 1 && i > 0)
+        else if (numerator < 0)
         {
             std::cout << "-";
+            numerator = -numerator;
         }
-        else if (denominator == 1)
+
+        if (numerator != 1 || i == 0)
         {
             std::cout << numerator;
         }
-        else
+
+        if (denominator != 1)
         {
-            std::cout << numerator << "/" << denominator;
+            std::cout << "/" << denominator;
         }
 
         if (i > 0)
         {
             std::cout << "x";
+
             if (i > 1)
             {
                 std::cout << "^" << i;
