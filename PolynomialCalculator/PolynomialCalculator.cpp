@@ -14,15 +14,22 @@
 */
 
 #include <iostream>
+#include <vector>
 
-constexpr unsigned MAX_OPTION_SIZE = 10;
+constexpr int MAX_OPTION_SIZE = 10;
+constexpr int MAX_FRACTION_SIZE = 10;
+constexpr int MAX_DEGREE_SIZE = 10;
+constexpr int FISRT_OPTION = 1;
+constexpr int LAST_OPTION = 11;
 constexpr char TERMINATE_SYMBOL = '\0';
 
 void showOptions();
 void handleOptionSelection();
 bool isValidOption(char* option);
 int arrayToInteger(char* string);
-bool isValidInteger(char* str);
+bool isValidDegree(char* degreeInput);
+void readPolynomial(char name);
+void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomial);
 
 int main()
 {
@@ -87,7 +94,7 @@ void handleOptionSelection()
 	        }
 	        case 4:
 	        {
-	            //Dividing polynomials...\n
+	            //Dividing polynomials...
 	            break;
 	        }
 	        case 5:
@@ -97,12 +104,12 @@ void handleOptionSelection()
 	        }
 	        case 6:
 	        {
-	            //Finding value of polynomial...\n"
+	            //Finding value of polynomial...
 	            break;
 	        }
 	        case 7:
 	        {
-	            //Finding GCD of polynomials...\n
+	            //Finding GCD of polynomials...
 	            break;
 	        }
 	        case 8:
@@ -136,18 +143,17 @@ bool isValidOption(char* option)
         return false;
     }
 
-    int i = 0;
-    while (option[i] != TERMINATE_SYMBOL)
+    for (int i = 0; option[i] != TERMINATE_SYMBOL; i++)
     {
         if (option[i] < '0' || option[i] > '9')
         {
             return false;
         }
-        i++;
     }
 
     int optionNumber = arrayToInteger(option);
-    return optionNumber >= 1 && optionNumber <= 11;
+
+    return FISRT_OPTION <= optionNumber && optionNumber <= LAST_OPTION;
 }
 
 int arrayToInteger(char* string)
@@ -214,3 +220,216 @@ int lcm(int a, int b)
 
 	return abs(a * b) / gcd(a, b);
 }
+
+int readPolynomialDegree()
+{
+	std::cout << "Enter degree of your polynomial>> ";
+
+	char degree[MAX_DEGREE_SIZE];
+	std::cin >> degree;
+
+	if (!isValidDegree(degree))
+	{
+        std::cout << "Hmm, that doesn't look right. Please enter a non-negative integer for the degree of the polynomial." << std::endl;
+
+        return readPolynomialDegree();
+	}
+
+	return arrayToInteger(degree);
+}
+
+bool isValidDegree(char* degreeInput)
+{
+    int i = 0;
+
+    if (degreeInput[i] == TERMINATE_SYMBOL)
+    {
+        return false;
+    }
+
+    if (degreeInput[i] == '-')
+    {
+        return false;
+    }
+
+    while (degreeInput[i] != TERMINATE_SYMBOL)
+    {
+        if (degreeInput[i] < '0' || degreeInput[i] > '9')
+        {
+            return false;
+        }
+
+        i++;
+    }
+
+    return true;
+}
+
+bool isValidInteger(char* str) {
+    if (!str || *str == TERMINATE_SYMBOL) {
+        return false;
+    }
+
+    if (*str == '+' || *str == '-') {
+        str++;
+    }
+
+    if (*str == TERMINATE_SYMBOL) {
+        return false;
+    }
+
+    while (*str != TERMINATE_SYMBOL) {
+        if (*str < '0' || *str > '9') {
+            return false;
+        }
+        str++;
+    }
+
+    return true;
+}
+
+std::pair<int, int> readFraction()
+{
+    char input[MAX_FRACTION_SIZE];
+    std::cin >> input;
+
+    int numerator = 0, denominator = 1;
+    char* slashPosition = nullptr;
+
+    for (int i = 0; input[i] != TERMINATE_SYMBOL; i++) 
+    {
+        if (input[i] == '/') {
+            slashPosition = &input[i];
+            break;
+        }
+    }
+
+    if (slashPosition == nullptr) 
+    {
+        if (!isValidInteger(input)) 
+        {
+            std::cout << "Invalid input! Please enter a valid number: ";
+
+            return readFraction();
+        }
+
+        numerator = arrayToInteger(input);
+    }
+    else 
+    {
+        *slashPosition = TERMINATE_SYMBOL;
+        char* numeratorStr = input;
+        char* denominatorStr = slashPosition + 1;
+
+        if (!isValidInteger(numeratorStr) || !isValidInteger(denominatorStr)) 
+        {
+            std::cout << "Invalid fraction format! Both numerator and denominator should be integers. Please enter a valid number: ";
+
+            return readFraction();
+        }
+
+        numerator = arrayToInteger(numeratorStr);
+        denominator = arrayToInteger(denominatorStr);
+
+        if (denominator == 0) 
+        {
+            std::cerr << "Denominator can't be zero. Please enter a valid number: ";
+            return readFraction();
+        }
+    }
+
+    int divisor = gcd(numerator, denominator);
+    numerator /= divisor;
+    denominator /= divisor;
+
+    if (denominator < 0) {
+        numerator = -numerator;
+        denominator = -denominator;
+    }
+
+    return { numerator, denominator };
+}
+
+void readPolynomial(char name)
+{
+	std::cout << "Enter Polynomial>>" << name << "(x)" << std::endl;
+
+	int degree = readPolynomialDegree();
+
+	std::vector<std::pair<int, int>> polynomial(degree + 1);
+
+	for (int i = degree; i >= 0; i--)
+	{
+        std::cout << "Enter coefficient before x^" << i << ": ";
+		std::pair<int, int> coefficient = readFraction();
+
+        polynomial[i] = coefficient;
+	}
+
+    printPolynomial(name, polynomial);
+}
+
+void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomial)
+{
+    std::cout << name << "(x) = ";
+    bool firstTerm = true;
+
+    for (int i = polynomial.size() - 1; i >= 0; --i)
+    {
+        int numerator = polynomial[i].first;
+        int denominator = polynomial[i].second;
+
+        if (numerator == 0)
+        {
+            continue;
+        }
+
+        if (!firstTerm)
+        {
+            if (numerator > 0)
+            {
+                std::cout << "+";
+            }
+            else
+            {
+                std::cout << " ";
+            }
+        }
+
+        if (numerator == 1 && denominator == 1 && i > 0)
+        {
+            std::cout << "";
+        }
+        else if (numerator == -1 && denominator == 1 && i > 0)
+        {
+            std::cout << "-";
+        }
+        else if (denominator == 1)
+        {
+            std::cout << numerator;
+        }
+        else
+        {
+            std::cout << numerator << "/" << denominator;
+        }
+
+        if (i > 0)
+        {
+            std::cout << "x";
+            if (i > 1)
+            {
+                std::cout << "^" << i;
+            }
+        }
+
+        firstTerm = false;
+    }
+
+    if (firstTerm)
+    {
+        std::cout << "0";
+    }
+
+    std::cout << std::endl;
+}
+
