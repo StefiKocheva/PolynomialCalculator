@@ -91,61 +91,61 @@ void handleOptionSelection()
 
         switch (optionNumber)
         {
-        case 1:
-        {
-            addPolynomials();
-
-            break;
-        }
-        case 2:
-        {
-            //Subtracting polynomials...
-            break;
-        }
-        case 3:
-        {
-            //Multiplying polynomials...
-            break;
-        }
-        case 4:
-        {
-            //Dividing polynomials...
-            break;
-        }
-        case 5:
-        {
-            //Multiplying polynomial by scalar...
-            break;
-        }
-        case 6:
-        {
-            //Finding value of polynomial...
-            break;
-        }
-        case 7:
-        {
-            //Finding GCD of polynomials...
-            break;
-        }
-        case 8:
-        {
-            //Displaying Vieta's formulas...
-            break;
-        }
-        case 9:
-        {
-            //Representing polynomial in powers of (x + a)...
-            break;
-        }
-        case 10:
-        {
-            //Factoring polynomial...
-            break;
-        }
-        case 11:
-        {
-            std::cout << "Exiting..." << std::endl;
-            return;
+	        case 1:
+	        {
+	            addPolynomials();
+	            break;
+	        }
+	        case 2:
+	        {
+	            //Subtracting polynomials...
+	            break;
+	        }
+	        case 3:
+	        {
+	            //Multiplying polynomials...
+	            break;
+	        }
+	        case 4:
+	        {
+	            //Dividing polynomials...
+	            break;
+	        }
+	        case 5:
+	        {
+	            //Multiplying polynomial by scalar...
+	            break;
+	        }
+	        case 6:
+	        {
+	            //Finding value of polynomial...
+	            break;
+	        }
+	        case 7:
+	        {
+	            //Finding GCD of polynomials...
+	            break;
+	        }
+	        case 8:
+	        {
+	            //Displaying Vieta's formulas...
+	            break;
+	        }
+	        case 9:
+	        {
+	            //Representing polynomial in powers of (x + a)...
+	            break;
+	        }
+	        case 10:
+	        {
+	            //Factoring polynomial...
+	            break;
+	        }
+	        case 11:
+	        {
+	            std::cout << "Exiting..." << std::endl;
+	            return;
+	        }
         }
     }
 }
