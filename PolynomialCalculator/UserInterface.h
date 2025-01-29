@@ -1,4 +1,4 @@
-/**
+﻿/**
 *
 * Solution to course project # 4
 * Introduction to programming course
@@ -13,15 +13,12 @@
 *
 */
 
-#include <iostream>
+#pragma once
 
-#include "UserInterface.h"
+void startPolynomialCalculator();
 
-int main()
-{
-    std::cout << "Welcome to Polynomial Calculator - a mini project intended to work with polynomials with rational coefficients" << std::endl;
+void showOptions();
 
-    startPolynomialCalculator();
+void handleOptionSelection();
 
-    return 0;
-}
+void printSeparator();
