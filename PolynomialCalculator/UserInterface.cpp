@@ -43,7 +43,7 @@ void showOptions()
 
 void handleOptionSelection()
 {
-	char option[MAX_OPTION_SIZE];
+	int option;
 
 	while (true)
 	{
@@ -53,79 +53,74 @@ void handleOptionSelection()
 
 		switch (option)
 		{
-		case 1:
-		{
-			addPolynomials();
+			case 1:
+			{
+				addPolynomials();
 
-			break;
-		}
-		case 2:
-		{
-			subtractPolynomials();
+				break;
+			}
+			case 2:
+			{
+				subtractPolynomials();
 
-			break;
-		}
-		case 3:
-		{
-			multiplyPolynomials();
+				break;
+			}
+			case 3:
+			{
+				multiplyPolynomials();
 
-			break;
-		}
-		case 4:
-		{
-			//Dividing polynomials...
-			break;
-		}
-		case 5:
-		{
-			multiplyPolynomialByScalar();
+				break;
+			}
+			case 4:
+			{
+				dividePolynomials();
 
-			break;
-		}
-		case 6:
-		{
-			evaluatePolynomial();
+				break;
+			}
+			case 5:
+			{
+				multiplyPolynomialByRationalNumber();
 
-			break;
-		}
-		case 7:
-		{
-			//Finding GCD of polynomials...
-			break;
-		}
-		case 8:
-		{
+				break;
+			}
+			case 6:
+			{
+				evaluatePolynomial();
 
-			break;
-		}
-		case 9:
-		{
-			break;
-		}
-		case 10:
-		{
-			//Factoring polynomial...
-			break;
-		}
-		case 11:
-		{
-			std::cout << "Exiting..." << std::endl;
+				break;
+			}
+			case 7:
+			{
+				break;
+			}
+			case 8:
+			{
+				displayVietasFormula();
 
-			return;
-		}
-		default:
-		{
-			std::cout << "Invalid option! Try again>> " << std::endl;
+				break;
+			}
+			case 9:
+			{
+				break;
+			}
+			case 10:
+			{
+				break;
+			}
+			case 11:
+			{
+				std::cout << "Exiting..." << std::endl;
 
-			continue;
-		}
+				return;
+			}
+			default:
+			{
+				std::cout << "Invalid option! Try again>> " << std::endl;
+
+				continue;
+			}
 		}
 
-		printSeparator();
+		std::cout << std::endl;
 	}
-}
-
-void printSeparator()
-{
-	std::cout << "------------------------------------------------------------------------------------" << std::endl;
 }

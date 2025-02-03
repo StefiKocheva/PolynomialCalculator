@@ -17,72 +17,7 @@
 #include <vector>
 
 #include "HelperFunctions.h"
-#include "Constants.h."
-
-int min(int a, int b)
-{
-    return a > b ? b : a;
-}
-
-int max(int a, int b)
-{
-    return a < b ? b : a;
-}
-
-int abs(int a)
-{
-    return a < 0 ? -a : a;
-}
-
-int gcd(int a, int b)
-{
-    while (b != 0) {
-        int temp = b;
-        b = a % b;
-        a = temp;
-    }
-
-    return abs(a);
-}
-
-int lcm(int a, int b)
-{
-    if (a == 0 || b == 0)
-    {
-        return 0;
-    }
-
-    return abs(a * b) / gcd(a, b);
-}
-
-int arrToInteger(char* str)
-{
-    int sign = 1;
-    int result = 0;
-
-    while (*str == ' ' || *str == '\t' || *str == '\n')
-    {
-        str++;
-    }
-
-    if (*str == '-')
-    {
-        sign = -1;
-        str++;
-    }
-    else if (*str == '+')
-    {
-        str++;
-    }
-
-    while (*str != TERMINATE_SYMBOL)
-    {
-        result = result * 10 + (*str - '0');
-        str++;
-    }
-
-    return result * sign;
-}
+#include "Constants.h"
 
 std::pair<int, int> readFraction()
 {
@@ -105,12 +40,12 @@ std::pair<int, int> readFraction()
     {
         if (!isValidInteger(input))
         {
-            std::cout << "Invalid number! Try again>> ";
+            std::cout << "Invalid input! Try again>> ";
 
             return readFraction();
         }
 
-        numerator = arrToInteger(input);
+        numerator = arrayToInteger(input);
     }
     else
     {
@@ -120,48 +55,55 @@ std::pair<int, int> readFraction()
 
         if (!isValidInteger(numeratorStr) || !isValidInteger(denominatorStr))
         {
-            std::cout << "Invalid fraction! Try again>>: ";
+            std::cout << "Invalid input! Try again>>: ";
 
             return readFraction();
         }
 
-        numerator = arrToInteger(numeratorStr);
-        denominator = arrToInteger(denominatorStr);
+        numerator = arrayToInteger(numeratorStr);
+        denominator = arrayToInteger(denominatorStr);
 
         if (denominator == 0)
         {
-            std::cout << "Invalid denominator! Try again>> ";
+            std::cout << "Invalid input! Try again>> ";
+
             return readFraction();
         }
     }
 
-    return simplifyFraction(numerator, denominator);;
+    return simplifyFraction(numerator, denominator);
 }
 
 std::pair<int, int> addFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB)
 {
-    int lcmDenominator = lcm(fractionA.second, fractionB.second);
+    int denominatorLcm = lcm(fractionA.second, fractionB.second);
 
-    int sumNumerator = (fractionA.first * (lcmDenominator / fractionA.second)) + (fractionB.first * (lcmDenominator / fractionB.second));
+    int adjustedNumeratorA = fractionA.first * (denominatorLcm / fractionA.second);
+    int adjustedNumeratorB = fractionB.first * (denominatorLcm / fractionB.second);
 
-    return simplifyFraction(sumNumerator, lcmDenominator);
+    int numeratorSum = adjustedNumeratorA + adjustedNumeratorB;
+
+    return simplifyFraction(numeratorSum, denominatorLcm);
 }
 
 
 std::pair<int, int> subtractFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB)
 {
-    int lcmDenominator = lcm(fractionA.second, fractionB.second);
+    int denominatorLcm = lcm(fractionA.second, fractionB.second);
 
-    int differenceNumerator = (fractionA.first * (lcmDenominator / fractionA.second)) - (fractionB.first * (lcmDenominator / fractionB.second));
+    int adjustedNumeratorA = fractionA.first * (denominatorLcm / fractionA.second);
+    int adjustedNumeratorB = fractionB.first * (denominatorLcm / fractionB.second);
 
-    return simplifyFraction(differenceNumerator, lcmDenominator);
+    int numeratorDifference = adjustedNumeratorA - adjustedNumeratorB;
+
+    return simplifyFraction(numeratorDifference, denominatorLcm);
 }
 
 
 std::pair<int, int> multiplyFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB)
 {
-    int numeratorProduct = fractionA.first * fractionA.second;
-    int denominatorProduct = fractionB.first * fractionB.second;
+    int numeratorProduct = fractionA.first * fractionB.first;
+    int denominatorProduct = fractionA.second * fractionB.second;
 
     return simplifyFraction(numeratorProduct, denominatorProduct);
 }
@@ -191,50 +133,119 @@ std::pair<int, int> simplifyFraction(int numerator, int denominator)
 
 void printFraction(const std::pair<int, int>& fraction)
 {
-    int numerator = fraction.first;
-    int denominator = fraction.second;
-
-    if (numerator == 0)
+    if (fraction.first == 0)
     {
         std::cout << "0";
 
         return;
     }
 
-    if (denominator == 1)
+    if (fraction.second == 1)
     {
-        std::cout << numerator;
+        std::cout << fraction.first;
     }
     else
     {
-        std::cout << numerator << "/" << denominator;
+        std::cout << fraction.first << "/" << fraction.second;
     }
 }
 
-bool isValidInteger(char* str) {
-    if (!str || *str == TERMINATE_SYMBOL) {
-        return false;
+int min(int a, int b)
+{
+    return a > b ? b : a;
+}
+
+int max(int a, int b)
+{
+    return a < b ? b : a;
+}
+
+int absolute(int a)
+{
+    return a < 0 ? -a : a;
+}
+
+int gcd(int a, int b)
+{
+    while (b != 0)
+    {
+        int temp = b;
+        b = a % b;
+        a = temp;
     }
 
-    if (*str == '+' || *str == '-') {
+    return absolute(a);
+}
+
+int lcm(int a, int b)
+{
+    if (a == 0 || b == 0)
+    {
+        return 0;
+    }
+
+    return absolute(a * b) / gcd(a, b);
+}
+
+int arrayToInteger(char* str)
+{
+    int sign = 1;
+    int result = 0;
+
+    while (*str == ' ' || *str == '\t' || *str == '\n')
+    {
         str++;
     }
 
-    if (*str == TERMINATE_SYMBOL) {
+    if (*str == '-')
+    {
+        sign = -1;
+        str++;
+    }
+    else if (*str == '+')
+    {
+        str++;
+    }
+
+    while (*str != TERMINATE_SYMBOL)
+    {
+        result = result * 10 + (*str - '0');
+        str++;
+    }
+
+    return result * sign;
+}
+
+bool isValidInteger(const char* str) {
+    if (!str || *str == TERMINATE_SYMBOL) 
+    {
         return false;
     }
 
-    while (*str != TERMINATE_SYMBOL) {
-        if (*str < '0' || *str > '9') {
+    if (*str == '+' || *str == '-') 
+    {
+        str++;
+    }
+
+    if (*str == TERMINATE_SYMBOL) 
+    {
+        return false;
+    }
+
+    while (*str != TERMINATE_SYMBOL) 
+    {
+        if (*str < '0' || *str > '9') 
+        {
             return false;
         }
+
         str++;
     }
 
     return true;
 }
 
-bool isValidDegree(char* degree)
+bool isValidDegree(const char* degree)
 {
     int i = 0;
 

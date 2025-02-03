@@ -25,9 +25,13 @@ void addPolynomials();
 
 void subtractPolynomials();
 
-void multiplyPolynomialByScalar();
+void multiplyPolynomialByRationalNumber();
 
 void multiplyPolynomials();
+
+void dividePolynomials();
+
+void displayVietasFormula();
 
 void evaluatePolynomial();
 
