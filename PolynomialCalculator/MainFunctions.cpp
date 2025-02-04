@@ -9,7 +9,7 @@
 * @idnumber 0MI0600436
 * @compiler VC
 *
-* What this file contains
+* Source: Implements polynomial operations, including arithmetic, evaluation, differentiation, and GCD computation.
 *
 */
 
@@ -47,17 +47,17 @@ int readPolynomialDegree()
 {
     std::cout << "Enter degree of your polynomial>> ";
 
-    char degree[MAX_DEGREE_SIZE];
+    char degree[MAX_INTEGER_SIZE];
     std::cin >> degree;
 
-    if (!isValidDegree(degree))
+    if (!isValidNumber(degree, true))
     {
-        std::cout << "Invalid input! Try again>> " << std::endl;
+        std::cout << "Error: Invalid degree! Try again... " << std::endl;
 
         return readPolynomialDegree();
     }
 
-    return arrayToInteger(degree);
+    return arrToInteger(degree);
 }
 
 void addPolynomials()
@@ -65,20 +65,20 @@ void addPolynomials()
     std::vector<std::pair<int, int>> polynomialP = readPolynomial('P');
     std::vector<std::pair<int, int>> polynomialQ = readPolynomial('Q');
 
-    const int maxDegree = max(polynomialP.size(), polynomialQ.size()) - 1;
-
-    const std::pair<int, int> defaultFraction = { 0, 1 };
-    std::vector<std::pair<int, int>> polynomialSum(maxDegree + 1, defaultFraction);
+    const int maxDegree = max(polynomialP.size() - 1, polynomialQ.size() - 1);
+    const std::pair<int, int> defaultFrac = { 0, 1 };
+    std::vector<std::pair<int, int>> polynomialS(maxDegree + 1, defaultFrac);
 
     for (int i = 0; i <= maxDegree; i++)
     {
-        polynomialSum[i] = addFractions(
-        i < polynomialP.size() ? polynomialP[i] : defaultFraction,
-        i < polynomialQ.size() ? polynomialQ[i] : defaultFraction);
+        std::pair<int, int> termP = (i < polynomialP.size()) ? polynomialP[i] : defaultFrac;
+        std::pair<int, int> termQ = (i < polynomialQ.size()) ? polynomialQ[i] : defaultFrac;
+
+        polynomialS[i] = addFractions(termP, termQ);
     }
 
     std::cout << "P(x)+Q(x) = ";
-    printPolynomial(TERMINATE_SYMBOL, polynomialSum);
+    printPolynomial(TERMINATE_SYMBOL, polynomialS);
 }
 
 void subtractPolynomials()
@@ -86,81 +86,236 @@ void subtractPolynomials()
     std::vector<std::pair<int, int>> polynomialP = readPolynomial('P');
     std::vector<std::pair<int, int>> polynomialQ = readPolynomial('Q');
 
-    int maxDegree = max(polynomialP.size(), polynomialQ.size()) - 1;
+    std::vector<std::pair<int, int>> polynomialD = subtractPolynomials(polynomialP, polynomialQ);
 
-    std::pair<int, int> defaultFraction = { 0, 1 };
-    std::vector<std::pair<int, int>> result(maxDegree + 1, defaultFraction);
+    std::cout << "P(x)-Q(x) = ";
+    printPolynomial(TERMINATE_SYMBOL, polynomialD);
+}
+
+std::vector<std::pair<int, int>> subtractPolynomials(std::vector<std::pair<int, int>>& polynomialP, std::vector<std::pair<int, int>>& polynomialQ)
+{
+    const int maxDegree = max(polynomialP.size() - 1, polynomialQ.size() - 1);
+    const std::pair<int, int> defaultFrac = { 0, 1 };
+    std::vector<std::pair<int, int>> polynomialD(maxDegree + 1, defaultFrac);
 
     for (int i = 0; i <= maxDegree; i++)
     {
-        result[i] = subtractFractions(
-            i < polynomialP.size() ? polynomialP[i] : defaultFraction,
-            i < polynomialQ.size() ? polynomialQ[i] : defaultFraction);
+        std::pair<int, int> termP = (i < polynomialP.size()) ? polynomialP[i] : defaultFrac;
+        std::pair<int, int> termQ = (i < polynomialQ.size()) ? polynomialQ[i] : defaultFrac;
+
+        polynomialD[i] = subtractFractions(termP, termQ);
     }
 
-    std::cout << "P(x)-Q(x) = ";
+    return polynomialD;
+}
+
+void multiplyPolynomials()
+{
+    std::vector<std::pair<int, int>> polynomialP = readPolynomial('P');
+    std::vector<std::pair<int, int>> polynomialQ = readPolynomial('Q');
+
+    int degreeResult = (polynomialP.size() - 1) + (polynomialQ.size() - 1);
+    std::vector<std::pair<int, int>> result(degreeResult + 1, { 0, 1 });
+
+    for (int i = 0; i < polynomialP.size(); i++)
+    {
+        for (int j = 0; j < polynomialQ.size(); j++)
+        {
+            std::pair<int, int> fractionProfuct = multiplyFractions(polynomialP[i], polynomialQ[j]);
+
+            result[i + j] = addFractions(result[i + j], fractionProfuct);
+        }
+    }
+
+    std::cout << "P(x)*Q(x) = ";
     printPolynomial(TERMINATE_SYMBOL, result);
 }
 
-std::vector<std::pair<int, int>> subtractPolynomials(std::vector<std::pair<int, int>> polynomialP, std::vector<std::pair<int, int>> polynomialQ)
+void dividePolynomials()
 {
-    int maxDegree = max(polynomialP.size(), polynomialQ.size()) - 1;
+    std::vector<std::pair<int, int>> polynomialA = readPolynomial('A');
+    std::vector<std::pair<int, int>> polynomialB = readPolynomial('B');
 
-    std::pair<int, int> defaultFraction = { 0, 1 };
-    std::vector<std::pair<int, int>> result(maxDegree + 1, defaultFraction);
+    int degreeA = polynomialA.size() - 1;
+    int degreeB = polynomialB.size() - 1;
 
-    for (int i = 0; i <= maxDegree; i++)
+    if (!isDivisionPossible(polynomialB, degreeA, degreeB))
     {
-        result[i] = subtractFractions(
-            i < polynomialP.size() ? polynomialP[i] : defaultFraction,
-            i < polynomialQ.size() ? polynomialQ[i] : defaultFraction);
+        return dividePolynomials();
     }
 
-    return result;
+    std::vector<std::pair<int, int>> polynomialQ((degreeA - degreeB) + 1, { 0, 1 });
+    std::vector<std::pair<int, int>> polynomialR = polynomialA;
+
+    while (!polynomialR.empty() && polynomialR.size() > degreeB)
+    {
+        int degreeR = polynomialR.size() - 1;
+
+        std::pair<int, int> leadingTermQ = divideFractions(polynomialR.back(), polynomialB.back());
+        int termDegreeQ = degreeR - degreeB;
+
+        polynomialQ[termDegreeQ] = leadingTermQ;
+
+        std::vector<std::pair<int, int>> termProduct(polynomialR.size(), { 0, 1 });
+        for (int i = 0; i < polynomialB.size(); i++)
+        {
+            termProduct[termDegreeQ + i] = multiplyFractions(polynomialB[i], leadingTermQ);
+        }
+
+        polynomialR = subtractPolynomials(polynomialR, termProduct);
+
+        while (!polynomialR.empty() && polynomialR.back().first == 0)
+        {
+            polynomialR.pop_back();
+        }
+    }
+
+    std::cout << "Quotient ";
+    printPolynomial('Q', polynomialQ);
+    std::cout << "Remainder ";
+    printPolynomial('R', polynomialR);
 }
 
-void multiplyPolynomialByRationalNumber()
+bool isDivisionPossible(const std::vector<std::pair<int, int>>& polynomialB, int degreeA, int degreeB)
 {
-    std::vector<std::pair<int, int>> polynomial = readPolynomial('P');
+    if (polynomialB.size() == 1 && polynomialB[0].first == 0)
+    {
+        std::cout << "Error: Division by zero! Try again..." << std::endl;
+
+        return false;
+    }
+
+    if (degreeA < degreeB)
+    {
+        std::cout << "Error: Degree of A(x) < Degree of B(x)! Try again..." << std::endl;
+
+        return false;
+    }
+
+    return true;
+}
+
+void multiplyPolynomialByScalar()
+{
+    std::vector<std::pair<int, int>> polynomialP = readPolynomial('P');
 
     std::cout << "Enter rational number>> ";
-    const std::pair<int, int> fraction = readFraction();
+    const std::pair<int, int> fractionB = readFraction();
 
-    for (int i = 0; i < polynomial.size(); i++)
+    for (int i = 0; i < polynomialP.size(); i++)
     {
-        polynomial[i] = multiplyFractions(polynomial[i], fraction);
+        polynomialP[i] = multiplyFractions(polynomialP[i], fractionB);
     }
 
     std::cout << "Result: ";
-    printPolynomial(TERMINATE_SYMBOL, polynomial);
+    printPolynomial(TERMINATE_SYMBOL, polynomialP);
 }
 
 void evaluatePolynomial()
 {
-    std::vector<std::pair<int, int>> polynomial = readPolynomial('P');
+    std::vector<std::pair<int, int>> polynomialP = readPolynomial('P');
 
     std::cout << "Enter rational number>> ";
     const std::pair<int, int> fraction = readFraction();
 
-    std::pair<int, int> powers = { 1, 1 };
-    std::pair<int, int> polynomialValue = { 0, 1 };
+    std::pair<int, int> currentMultiplier = { 1, 1 };
+    std::pair<int, int> valuePolynomialP = { 0, 1 };
 
-    for (int i = 0; i < polynomial.size(); i++)
+    for (int i = 0; i < polynomialP.size(); i++)
     {
         if (i > 0)
         {
-            powers = multiplyFractions(powers, fraction);
+            currentMultiplier = multiplyFractions(currentMultiplier, fraction);
         }
 
-        std::pair<int, int> term = multiplyFractions(polynomial[i], powers);
-        polynomialValue = addFractions(polynomialValue, term);
+        std::pair<int, int> term = multiplyFractions(polynomialP[i], currentMultiplier);
+
+        valuePolynomialP = addFractions(valuePolynomialP, term);
     }
 
     std::cout << "P(";
     printFraction(fraction);
     std::cout << ") = ";
-    printFraction(polynomialValue);
+    printFraction(valuePolynomialP);
     std::cout << std::endl;
+}
+
+void displayVietasFormulas()
+{
+    std::vector<std::pair<int, int>> polynomialP = readPolynomial('P');
+    const int degreeP = polynomialP.size() - 1;
+
+    if (degreeP < 1)
+    {
+        std::cout << "Error: Degree of P(x) < 1! Try again..." << std::endl;
+
+        return displayVietasFormulas();
+    }
+
+    std::cout << "Vieta's Formulas for polynomial: ";
+    printPolynomial('P', polynomialP);
+
+    std::pair<int, int> leadingCoefficient = polynomialP[degreeP];
+
+    for (int i = 1; i <= degreeP; i++)
+    {
+        std::pair<int, int> currentCoeff = polynomialP[degreeP - i];
+        std::pair<int, int> currentRoot = divideFractions(currentCoeff, leadingCoefficient);
+
+        if (i % 2 == 1)
+        {
+            currentRoot.first = -currentRoot.first;
+        }
+
+        std::cout << "s_" << i << " = ";
+        printFraction(currentRoot);
+        std::cout << std::endl;
+    }
+}
+
+void findKthDerivative()
+{
+    std::vector<std::pair<int, int>> polynomialP = readPolynomial('P');
+
+    std::cout << "Enter k>> ";
+    const int k = readInteger(true);
+
+    if (k != 0)
+    {
+        polynomialP = computeKthDerivative(polynomialP, k);
+
+    }
+
+    std::cout << "P^("<< k <<")(x) = ";
+    printPolynomial(TERMINATE_SYMBOL, polynomialP);
+}
+
+std::vector<std::pair<int, int>> computeKthDerivative(std::vector<std::pair<int, int>> polynomialP, const int k)
+{
+    int degreeP = polynomialP.size() - 1;
+
+    if (k > degreeP)
+    {
+        return {{ 0, 1 }};
+    }
+
+    for (int d = 1; d <= k; d++)
+    {
+        std::vector<std::pair<int, int>> derivative(degreeP, { 0, 1 });
+
+        for (int i = 1; i <= degreeP; i++)
+        {
+            std::pair<int, int> coef = polynomialP[i];
+            std::pair<int, int> multiplier = { i, 1 };
+
+            derivative[i - 1] = multiplyFractions(coef, multiplier);
+        }
+
+        polynomialP = derivative;
+        degreeP--;
+    }
+
+    return polynomialP;
 }
 
 void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomial)
@@ -189,7 +344,8 @@ void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomi
                 std::cout << "+";
             }
         }
-        else if (numerator < 0)
+
+        if (numerator < 0)
         {
             std::cout << "-";
             numerator = -numerator;
@@ -204,16 +360,7 @@ void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomi
         }
         else
         {
-            if (numerator == 1 && i != 0)
-            {
-                std::cout << "1";
-            }
-            else
-            {
-                std::cout << numerator;
-            }
-
-            std::cout << "/" << denominator;
+            std::cout << numerator << "/" << denominator;
         }
 
         if (i > 0)
@@ -234,120 +381,4 @@ void printPolynomial(char name, const std::vector<std::pair<int, int>>& polynomi
     }
 
     std::cout << std::endl;
-}
-
-void multiplyPolynomials()
-{
-    std::vector<std::pair<int, int>> firstPolynomial = readPolynomial('P');
-    std::vector<std::pair<int, int>> secondPolynomial = readPolynomial('Q');
-
-    int degreeResult = (firstPolynomial.size() - 1) + (secondPolynomial.size() - 1);
-    std::vector<std::pair<int, int>> result(degreeResult + 1, { 0, 1 });
-
-    for (int i = 0; i < firstPolynomial.size(); i++)
-    {
-        for (int j = 0; j < secondPolynomial.size(); j++)
-        {
-            std::pair<int, int> fractionProduct = multiplyFractions(firstPolynomial[i], secondPolynomial[j]);
-
-            result[i + j] = addFractions(result[i + j], fractionProduct);
-        }
-    }
-
-    std::cout << "P(x)*Q(x) = ";
-    printPolynomial(TERMINATE_SYMBOL, result);
-    std::cout << std::endl;
-}
-
-void displayVietasFormula()
-{
-    std::vector<std::pair<int, int>> polynomialP = readPolynomial('P');
-
-    const int degree = polynomialP.size() - 1;
-
-    if (degree < 1)
-    {
-        std::cout << "Vieta's formulas cannot be applied to a polynomial of degree less than 1." << std::endl;
-        return;
-    }
-
-    std::cout << "Vieta's Formulas for polynomial: P(x) = ";
-    printPolynomial('P', polynomialP);
-
-    std::pair<int, int> leadingCoefficient = polynomialP[degree];
-
-    if (leadingCoefficient.first == 0)
-    {
-        std::cout << "Invalid polynomial: Leading coefficient cannot be zero." << std::endl;
-        return;
-    }
-
-    for (int i = 1; i <= degree; i++)
-    {
-        std::pair<int, int> coefficient = polynomialP[degree - i];
-
-        std::pair<int, int> vietaTerm = divideFractions(coefficient, leadingCoefficient);
-
-        if (i % 2 == 1)
-        {
-            vietaTerm.first = -vietaTerm.first;
-        }
-
-        std::cout << "sigma_" << i << " = ";
-        printFraction(vietaTerm);
-        std::cout << std::endl;
-    }
-}
-
-void dividePolynomials()
-{
-    std::vector<std::pair<int, int>> polynomialA = readPolynomial('A');
-    std::vector<std::pair<int, int>> polynomialB = readPolynomial('B');
-
-    if (polynomialB.size() == 1 && polynomialB[0].first == 0)
-    {
-        std::cout << "Invalid input! Division by zero polynomial is not allowed. Try again>> " << std::endl;
-        return;
-    }
-
-    int degreeA = polynomialA.size() - 1;
-    int degreeB = polynomialB.size() - 1;
-
-    if (degreeA < degreeB)
-    {
-        std::cout << "Invalid input! Division by zero polynomial is not allowed. Try again>> " << std::endl;
-
-        return;
-    }
-
-    std::vector<std::pair<int, int>> polynomialQ((polynomialA.size() - 1 - degreeB) + 1, { 0, 1 });
-    std::vector<std::pair<int, int>> polynomialR = polynomialA;
-
-    while (!polynomialR.empty() && polynomialR.size() > polynomialB.size() - 1)
-    {
-        int degreeR = polynomialR.size() - 1;
-
-        std::pair<int, int> leadingTermQ = divideFractions(polynomialR.back(), polynomialB.back());
-        int termDegreeQ = degreeR - degreeB;
-
-        polynomialQ[termDegreeQ] = leadingTermQ;
-
-        std::vector<std::pair<int, int>> termProduct(polynomialR.size(), { 0, 1 });
-        for (int i = 0; i < polynomialB.size(); i++)
-        {
-            termProduct[termDegreeQ + i] = multiplyFractions(polynomialB[i], leadingTermQ);
-        }
-
-        polynomialR = subtractPolynomials(polynomialR, termProduct);
-
-        while (!polynomialR.empty() && polynomialR.back().first == 0)
-        {
-            polynomialR.pop_back();
-        }
-    }
-
-    std::cout << "Quotient ";
-    printPolynomial('Q', polynomialQ);
-    std::cout << "Remainder ";
-    printPolynomial('R', polynomialR);
 }

@@ -9,7 +9,7 @@
 * @idnumber 0MI0600436
 * @compiler VC
 *
-* What this file contains
+* Source: Implements fraction operations, including input handling, arithmetic operations, and validation.
 *
 */
 
@@ -38,14 +38,14 @@ std::pair<int, int> readFraction()
 
     if (slashPosition == nullptr)
     {
-        if (!isValidInteger(input))
+        if (!isValidNumber(input, false))
         {
-            std::cout << "Invalid input! Try again>> ";
+            std::cout << "Error: Invalid number! Try again>> ";
 
             return readFraction();
         }
 
-        numerator = arrayToInteger(input);
+        numerator = arrToInteger(input);
     }
     else
     {
@@ -53,19 +53,19 @@ std::pair<int, int> readFraction()
         char* numeratorStr = input;
         char* denominatorStr = slashPosition + 1;
 
-        if (!isValidInteger(numeratorStr) || !isValidInteger(denominatorStr))
+        if (!isValidNumber(numeratorStr, false) || !isValidNumber(denominatorStr, false))
         {
-            std::cout << "Invalid input! Try again>>: ";
+            std::cout << "Error: Invalid fraction! Try again>> ";
 
             return readFraction();
         }
 
-        numerator = arrayToInteger(numeratorStr);
-        denominator = arrayToInteger(denominatorStr);
+        numerator = arrToInteger(numeratorStr);
+        denominator = arrToInteger(denominatorStr);
 
         if (denominator == 0)
         {
-            std::cout << "Invalid input! Try again>> ";
+            std::cout << "Error: Division by zero! Try again>> ";
 
             return readFraction();
         }
@@ -74,7 +74,7 @@ std::pair<int, int> readFraction()
     return simplifyFraction(numerator, denominator);
 }
 
-std::pair<int, int> addFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB)
+std::pair<int, int> addFractions(std::pair<int, int> fractionA, std::pair<int, int> fractionB)
 {
     int denominatorLcm = lcm(fractionA.second, fractionB.second);
 
@@ -86,8 +86,7 @@ std::pair<int, int> addFractions(const std::pair<int, int> fractionA, const std:
     return simplifyFraction(numeratorSum, denominatorLcm);
 }
 
-
-std::pair<int, int> subtractFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB)
+std::pair<int, int> subtractFractions(std::pair<int, int> fractionA, std::pair<int, int> fractionB)
 {
     int denominatorLcm = lcm(fractionA.second, fractionB.second);
 
@@ -99,8 +98,7 @@ std::pair<int, int> subtractFractions(const std::pair<int, int> fractionA, const
     return simplifyFraction(numeratorDifference, denominatorLcm);
 }
 
-
-std::pair<int, int> multiplyFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB)
+std::pair<int, int> multiplyFractions(std::pair<int, int> fractionA, std::pair<int, int> fractionB)
 {
     int numeratorProduct = fractionA.first * fractionB.first;
     int denominatorProduct = fractionA.second * fractionB.second;
@@ -108,7 +106,7 @@ std::pair<int, int> multiplyFractions(const std::pair<int, int> fractionA, const
     return simplifyFraction(numeratorProduct, denominatorProduct);
 }
 
-std::pair<int, int> divideFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB)
+std::pair<int, int> divideFractions(std::pair<int, int> fractionA, std::pair<int, int> fractionB)
 {
     int numeratorProduct = fractionA.first * fractionB.second;
     int denominatorProduct = fractionA.second * fractionB.first;
@@ -118,7 +116,7 @@ std::pair<int, int> divideFractions(const std::pair<int, int> fractionA, const s
 
 std::pair<int, int> simplifyFraction(int numerator, int denominator)
 {
-    int divisor = gcd(numerator, denominator);
+    const int divisor = gcd(numerator, denominator);
     numerator /= divisor;
     denominator /= divisor;
 
@@ -187,42 +185,50 @@ int lcm(int a, int b)
     return absolute(a * b) / gcd(a, b);
 }
 
-int arrayToInteger(char* str)
+int readInteger(bool nonNegativeOnly)
 {
-    int sign = 1;
-    int result = 0;
+    char str[MAX_INTEGER_SIZE];
+    std::cin >> str;
 
-    while (*str == ' ' || *str == '\t' || *str == '\n')
+    if (!isValidNumber(str, nonNegativeOnly))
     {
-        str++;
+        std::cout << "Error: Invalid number! Try again>> ";
+
+        return readInteger(nonNegativeOnly);
     }
 
-    if (*str == '-')
-    {
-        sign = -1;
-        str++;
-    }
-    else if (*str == '+')
-    {
-        str++;
-    }
-
-    while (*str != TERMINATE_SYMBOL)
-    {
-        result = result * 10 + (*str - '0');
-        str++;
-    }
-
-    return result * sign;
+    return arrToInteger(str);
 }
 
-bool isValidInteger(const char* str) {
+const char* skipWhitespace(const char* str)
+{
+    while (*str == SPACE_SYMBOL || *str == TERMINATE_SYMBOL || *str == NEWLINE_SYMBOL)
+    {
+        str++;
+    }
+
+    return str;
+}
+
+bool isValidNumber(const char* str, bool nonNegativeOnly)
+{
+    str = skipWhitespace(str);
+
     if (!str || *str == TERMINATE_SYMBOL) 
     {
         return false;
     }
 
-    if (*str == '+' || *str == '-') 
+    if (*str == '-')
+    {
+        if (nonNegativeOnly)
+        {
+            return false;
+        }
+
+        str++;
+    }
+    else if (*str == '+')
     {
         str++;
     }
@@ -245,29 +251,29 @@ bool isValidInteger(const char* str) {
     return true;
 }
 
-bool isValidDegree(const char* degree)
+int arrToInteger(const char* str)
 {
-    int i = 0;
+    str = skipWhitespace(str);
 
-    if (degree[i] == TERMINATE_SYMBOL)
+    int sign = 1;
+	int result = 0;
+
+    if (*str == '-') 
     {
-        return false;
+        sign = -1;
+
+        str++;
+    }
+    else if (*str == '+') 
+    {
+        str++;
     }
 
-    if (degree[i] == '-')
+    while (*str != TERMINATE_SYMBOL) 
     {
-        return false;
+        result = result * 10 + (*str - '0');
+        str++;
     }
 
-    while (degree[i] != TERMINATE_SYMBOL)
-    {
-        if (degree[i] < '0' || degree[i] > '9')
-        {
-            return false;
-        }
-
-        i++;
-    }
-
-    return true;
+    return result * sign;
 }

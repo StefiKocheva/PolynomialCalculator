@@ -9,7 +9,7 @@
 * @idnumber 0MI0600436
 * @compiler VC
 *
-* What this file contains
+* Header: Declaration of functions for polynomial calculator interface and option handling.
 *
 */
 
@@ -20,5 +20,3 @@ void startPolynomialCalculator();
 void showOptions();
 
 void handleOptionSelection();
-
-void printSeparator();

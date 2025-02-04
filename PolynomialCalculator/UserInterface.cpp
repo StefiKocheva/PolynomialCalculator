@@ -9,7 +9,7 @@
 * @idnumber 0MI0600436
 * @compiler VC
 *
-* What this file contains
+* Source: Implements the user interface and manages user interactions.
 *
 */
 
@@ -17,7 +17,6 @@
 
 #include "UserInterface.h"
 #include "MainFunctions.h"
-#include "Constants.h"
 
 void startPolynomialCalculator()
 {
@@ -34,11 +33,9 @@ void showOptions()
 	std::cout << "4) Divide polynomials" << std::endl;
 	std::cout << "5) Multiply polynomial by scalar" << std::endl;
 	std::cout << "6) Find value of polynomial at a given number" << std::endl;
-	std::cout << "7) Find GCD of two polynomials" << std::endl;
-	std::cout << "8) Display Vieta's formulas for a given polynomial" << std::endl;
-	std::cout << "9) Represent a polynomial in powers of (x + a)" << std::endl;
-	std::cout << "10) Factor polynomial and find its rational roots" << std::endl;
-	std::cout << "11) Quit program" << std::endl;
+	std::cout << "7) Display Vieta's formulas for a given polynomial" << std::endl;
+	std::cout << "8) Find k-th derivative for a given polynomial" << std::endl;
+	std::cout << "9) Quit program" << std::endl;
 }
 
 void handleOptionSelection()
@@ -79,7 +76,7 @@ void handleOptionSelection()
 			}
 			case 5:
 			{
-				multiplyPolynomialByRationalNumber();
+				multiplyPolynomialByScalar();
 
 				break;
 			}
@@ -91,23 +88,17 @@ void handleOptionSelection()
 			}
 			case 7:
 			{
+				displayVietasFormulas();
+
 				break;
 			}
 			case 8:
 			{
-				displayVietasFormula();
+				findKthDerivative();
 
 				break;
 			}
 			case 9:
-			{
-				break;
-			}
-			case 10:
-			{
-				break;
-			}
-			case 11:
 			{
 				std::cout << "Exiting..." << std::endl;
 

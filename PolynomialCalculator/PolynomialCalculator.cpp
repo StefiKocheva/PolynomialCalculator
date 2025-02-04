@@ -9,7 +9,7 @@
 * @idnumber 0MI0600436
 * @compiler VC
 *
-* What this file contains
+* Source: Main entry point for the polynomial calculator application.
 *
 */
 

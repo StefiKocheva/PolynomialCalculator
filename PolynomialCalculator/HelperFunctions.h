@@ -9,7 +9,7 @@
 * @idnumber 0MI0600436
 * @compiler VC
 *
-* What this file contains
+* Header: Declares functions for fraction operations, mathematical utilities, and input validation.
 *
 */
 
@@ -17,13 +17,13 @@
 
 std::pair<int, int> readFraction();
 
-std::pair<int, int> addFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB);
+std::pair<int, int> addFractions(std::pair<int, int> fractionA, std::pair<int, int> fractionB);
 
-std::pair<int, int> subtractFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB);
+std::pair<int, int> subtractFractions(std::pair<int, int> fractionA, std::pair<int, int> fractionB);
 
-std::pair<int, int> multiplyFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB);
+std::pair<int, int> multiplyFractions(std::pair<int, int> fractionA, std::pair<int, int> fractionB);
 
-std::pair<int, int> divideFractions(const std::pair<int, int> fractionA, const std::pair<int, int> fractionB);
+std::pair<int, int> divideFractions(std::pair<int, int> fractionA, std::pair<int, int> fractionB);
 
 std::pair<int, int> simplifyFraction(int numerator, int denominator);
 
@@ -39,8 +39,12 @@ int gcd(int a, int b);
 
 int lcm(int a, int b);
 
-int arrayToInteger(char* str);
+const char* skipWhitespace(const char* str);
 
-bool isValidInteger(const char* str);
+int arrToInteger(const char* str);
 
-bool isValidDegree(const char* degree);
+int readInteger(bool nonNegativeOnly);
+
+int readNonNegativeInteger();
+
+bool isValidNumber(const char* str, bool nonNegativeOnly);
